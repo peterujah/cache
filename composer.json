@@ -1,5 +1,5 @@
 {
-    "name": "peterujah/cache",
+    "name": "peterujah/php-cache",
     "type": "library",
     "description": "Cache - a simple php caching.",
     "license": "MIT",
@@ -13,7 +13,7 @@
         "php": "^7.0 || ^8.0"
     },
     "require-dev": {
-        "peterujah/cache": "^0.1"
+        "peterujah/php-cache": "^0.1"
     },
     "scripts": {
         "post-install-cmd": [
