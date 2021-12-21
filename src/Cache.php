@@ -449,8 +449,9 @@ class Cache {
      * Remove cache file from disk with full path
      * @param string $path cache full path /
      * @param array $names cache file array names
+     * @param string $extension cache file extension type
      */
-    public function removeCacheDisk(string $path, string $extension = self::PHP, array $names) {
+    public function removeCacheDisk(string $path, array $names, string $extension = self::PHP) {
         foreach($array as $name){
             $fileCache = $path . md5($name) . $extension;
             if(@file_exists($fileCache)){
