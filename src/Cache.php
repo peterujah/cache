@@ -21,6 +21,12 @@ class Cache {
     public const TEXT = ".txt";
 
     /**
+     * Hold the cache default file path and file name
+     * @var string
+     */
+    protected const NANO = "nanoBlockCache";
+
+    /**
      * Hold the cache directory path
      * @var string
      */
@@ -74,7 +80,7 @@ class Cache {
      * @param string $path cache directory. Must end with "/"
      * @throws \Exception if there is a problem fetching the cache
      */
-	public function __construct($name = "nanoBlockCache", $path = "nanoBlockCache/"){
+	public function __construct($name = self::NANO, $path = self::NANO . "/"){
         $this->setFilename($name);
         $this->setCacheLocation($path);
         $this->setExtension(self::PHP);
@@ -197,7 +203,7 @@ class Cache {
      * @throws \Exception if the file cannot be saved
      */
     public function onExpired(string $key, object $cacheCallback) {
-        return $this->widthExpired($key, $this->cacheTime, false, $cacheCallback);
+        return $this->widthExpired($key, $cacheCallback, $this->cacheTime, false);
     }
 
     /**
@@ -209,7 +215,7 @@ class Cache {
      * @return mixed|null Data currently stored under key
      * @throws \Exception if the file cannot be saved
      */
-    public function widthExpired(string $key, int $time, bool $lock, object $cacheCallback) {
+    public function widthExpired(string $key, object $cacheCallback, int $time, bool $lock) {
 		if($this->isDebugging){
 			return $cacheCallback();
 		}
@@ -425,7 +431,6 @@ class Cache {
 
         return $this;
     }
-
 	
 	/**
      * Remove cache file
@@ -438,6 +443,20 @@ class Cache {
 			return true;
 		}
 		return false;
+    }
+
+    /**
+     * Remove cache file from disk with full path
+     * @param string $path cache full path /
+     * @param array $names cache file array names
+     */
+    public function removeCacheDisk(string $path, string $extension = self::PHP, array $names) {
+        foreach($array as $name){
+            $fileCache = $path . md5($name) . $extension;
+            if(@file_exists($fileCache)){
+                @unlink($fileCache);
+            }
+        }
     }
 
 }
