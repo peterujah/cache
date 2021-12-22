@@ -439,12 +439,12 @@ class Cache {
      * @return bool true if file path exist else false
      */
     public function removeCache() {
-		$fileCache = $this->getCacheFilePath();
-		if(@file_exists($fileCache)){
-			@unlink($fileCache);
-			return true;
-		}
-		return false;
+	$fileCache = $this->getCacheFilePath();
+	if(@file_exists($fileCache)){
+		@unlink($fileCache);
+		return true;
+	}
+	return false;
     }
 
     /**
