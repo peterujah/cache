@@ -83,7 +83,7 @@ class Cache {
 	public function __construct($name = self::NANO, $path = self::NANO . "/"){
         $this->setFilename($name);
         $this->setCacheLocation($path);
-        $this->setExtension(self::PHP);
+        $this->setExtension(self::JSON);
         $this->setDebugMode(false);
         $this->enableDeleteExpired(true);
         $this->onCreate();
@@ -96,9 +96,9 @@ class Cache {
      * @return Catch|object $this
      */
     public function setCacheLocation(string $path){
-        if(!is_dir($path)){
+        /*if(!is_dir($path)){
             throw new \InvalidArgumentException('$path must be a directory path "' . get_class($path) . '" instead');
-        }
+        }*/
         $this->cacheLocation = $path;
         return $this;
     }
@@ -119,7 +119,7 @@ class Cache {
      * @param string $extension 
      * @return Catch|object $this
      */
-    public function setExtension(string $extension = self::PHP){
+    public function setExtension(string $extension){
         $this->cacheFileExtension = $extension;
         return $this;
     }
@@ -423,11 +423,13 @@ class Cache {
 		if($this->cacheFileExtension == self::PHP && $this->cacheSecurity){
 			$writeLine = '<?php header("Content-type: text/plain"); die("Access denied"); ?>' . PHP_EOL;
 		}
+        
         $writeLine .= serialize($cache);
         $saved = (@file_put_contents($this->getCacheFilePath(), $writeLine) !== false);
 
-        if (!$saved)
+        if (!$saved){
             throw new \Exception("Cannot save cache");
+        }
 
         return $this;
     }
