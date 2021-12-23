@@ -74,6 +74,12 @@ class Cache {
      */
     private $cacheTime = 60;
 
+    /**
+     * Hold the cache response data
+     * @var bool
+     */
+    private $response = null;
+
      /**
      * Constructor.
      * @param string $name cache file name
@@ -217,7 +223,8 @@ class Cache {
      */
     public function widthExpired(string $key, object $cacheCallback, int $time, bool $lock) {
 		if($this->isDebugging){
-			return $cacheCallback();
+            $this->response = $cacheCallback();
+			return $this->response;
 		}
 
         if ($this->hasExpired($key)){
@@ -226,7 +233,61 @@ class Cache {
                 $this->buildData($key, $funcResponse, $time, $lock);
             }
         }
-        return $this->retrieveData($key);
+
+        $this->response = $this->retrieveData($key);
+        return $this->response;
+    }
+
+    /**
+     * Loads, create, update and delete cache with fewer options, without return
+     * @param string $key cache key
+     * @param object $cacheCallback Callback called when data needs to be refreshed.
+     * @throws \Exception if the file cannot be saved
+     */
+
+    public function onOneExpired(string $key, object $cacheCallback) {
+        $this->widthOneExpired($key, $cacheCallback, $this->cacheTime, false);
+    }
+
+     /**
+     * Loads, create, update and delete cache with more options, but no return
+     * @param string $key cache key
+     * @param int $time cache expiry time
+     * @param bool $lock lock catch to avoid deletion even when cache time expire
+     * @param object $cacheCallback Callback called when data needs to be refreshed.
+     * @throws \Exception if the file cannot be saved
+     */
+    public function widthOneExpired(string $key, object $cacheCallback, int $time, bool $lock) {
+		if($this->isDebugging){
+            $this->response = $cacheCallback();
+		}
+
+        if ($this->hasExpired($key)){
+            $funcResponse = $cacheCallback();
+            if(!empty($funcResponse)){
+                $this->buildData($key, $funcResponse, $time, $lock);
+            }
+        }
+
+        $this->response = $this->retrieveData($key);
+    }
+
+
+    /**
+     * Gets cache response data all or by key
+     * @param string $key cache response key
+     * @return mixed
+     */
+    public function get($key=null){
+        return (empty($key) ? $this->response : ($this->response[$key]??null));
+    }
+
+    /**
+     * Gets cache response data row key by default
+     * @return mixed
+     */
+    public function row(){
+        return $this->response["row"]??[];
     }
 
     /**
@@ -326,7 +387,7 @@ class Cache {
         $this->cacheArray[$key] = array(
             "time" => time(),
             "expire" => ($this->isDebugging ? 1 : $expiration),
-            "cacheData" => ($this->encodeInBase64 ? @base64_encode(@serialize($data)) : @serialize($data)) ,
+            "data" => ($this->encodeInBase64 ? @base64_encode(@serialize($data)) : @serialize($data)) ,
             "lock" => $lock
         );
         $this->writeCacheData();
@@ -396,7 +457,7 @@ class Cache {
             return null;
 		}
         $data = $this->cacheArray[$key];
-       return ($this->encodeInBase64 ? unserialize(base64_decode($data["cacheData"])) : unserialize($data["cacheData"]));    
+       return unserialize($this->encodeInBase64 ? base64_decode($data["data"]) : $data["data"]);    
     }
 
     /**
@@ -423,7 +484,7 @@ class Cache {
 		if($this->cacheFileExtension == self::PHP && $this->cacheSecurity){
 			$writeLine = '<?php header("Content-type: text/plain"); die("Access denied"); ?>' . PHP_EOL;
 		}
-        
+
         $writeLine .= serialize($cache);
         $saved = (@file_put_contents($this->getCacheFilePath(), $writeLine) !== false);
 
@@ -439,12 +500,12 @@ class Cache {
      * @return bool true if file path exist else false
      */
     public function removeCache() {
-	$fileCache = $this->getCacheFilePath();
-	if(@file_exists($fileCache)){
-		@unlink($fileCache);
-		return true;
-	}
-	return false;
+		$fileCache = $this->getCacheFilePath();
+		if(@file_exists($fileCache)){
+			@unlink($fileCache);
+			return true;
+		}
+		return false;
     }
 
     /**
