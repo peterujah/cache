@@ -514,13 +514,14 @@ class Cache {
      * @param array $names cache file array names
      * @param string $extension cache file extension type
      */
-    public function removeCacheDisk(string $path, array $names, string $extension = self::PHP) {
-        foreach($array as $name){
+    public function removeCacheDisk(string $path, array $names, string $extension = self::JSON) {
+        foreach($names as $name){
             $fileCache = $path . md5($name) . $extension;
             if(@file_exists($fileCache)){
                 @unlink($fileCache);
             }
         }
+        return $this;
     }
 
 }
