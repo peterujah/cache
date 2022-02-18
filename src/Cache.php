@@ -317,7 +317,7 @@ class Cache {
     public function removeIfExpired() {
         $counter = 0;
         foreach ($this->cacheArray as $key => $value) {
-            if (!$value["lock"] && $this->hasExpired($key)) {
+            if ($this->hasExpired($key) && !($value["lock"]??false)) {
                 $this->remove($key);
                 $counter++;
             }
