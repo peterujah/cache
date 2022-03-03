@@ -20,11 +20,11 @@ Query database and save response for later use
 ```php
 $cache->setExpire(7200);
 $user = $cache->onExpired("LIST", function () use($connConfig, $user_id){
-   $conn_handler = new Peterujah\NanoBlock\DBController($connConfig);
-	 $conn_handler->prepare('
-      SELECT * FROM user_table
-      WHERE user_id = :fund_user_id
-      LIMIT 1
+	$conn_handler = new Peterujah\NanoBlock\DBController($connConfig);
+	$conn_handler->prepare('
+	      SELECT * FROM user_table
+	      WHERE user_id = :fund_user_id
+	      LIMIT 1
 	');
 	$conn_handler->bind(':fund_user_id', $user_id);
 	$conn_handler->execute();
