@@ -12,7 +12,8 @@ composer require peterujah/cache
 Initialize DBController with configuration array
 
 ```php
-$cache = new Peterujah\NanoBlock\Cache("CACHE_NAME", __DIR__ . "/temp/caches/");
+use Peterujah\NanoBlock\Cache;
+$cache = new Cache("CACHE_NAME", __DIR__ . "/temp/caches/");
 ```
 
 Query database and save response for later use
@@ -38,3 +39,19 @@ $user = $cache->onExpired("LIST", function () use($connConfig, $user_id){
 });
 ```
 
+ Sets the cache debugging mode, the default is false
+ 
+```php
+$cache->setDebugMode(true|false);
+```
+
+Sets the cache file extension type default is JSON
+```php
+$cache->setExtension(Cache::PHP | Cache::JSON | Cache::TEXT);
+```
+
+Enable the cache to store secure data available only with php file extension, the default is true.
+
+```php
+$cache->enableSecureAccess(true | false);
+```
