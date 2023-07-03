@@ -221,20 +221,20 @@ class Cache {
      * @return mixed|null Data currently stored under key
      * @throws \Exception if the file cannot be saved
      */
-    public function widthExpired(string $key, object $cacheCallback, int $time, bool $lock) {
+     public function widthExpired(string $key, object $cacheCallback, int $time, bool $lock) {
 		if($this->isDebugging){
             $this->response = $cacheCallback();
 			return $this->response;
 		}
 
         if ($this->hasExpired($key)){
-            $funcResponse = $cacheCallback();
-            if(!empty($funcResponse)){
-                $this->buildData($key, $funcResponse, $time, $lock);
+            $this->response = $cacheCallback();
+            if(!empty($this->response)){
+                $this->buildData($key, $this->response, $time, $lock);
             }
+        }else{
+            $this->response = $this->retrieveData($key);
         }
-
-        $this->response = $this->retrieveData($key);
         return $this->response;
     }
 
@@ -257,19 +257,19 @@ class Cache {
      * @param object $cacheCallback Callback called when data needs to be refreshed.
      * @throws \Exception if the file cannot be saved
      */
-    public function widthOneExpired(string $key, object $cacheCallback, int $time, bool $lock) {
-		if($this->isDebugging){
+     public function widthOneExpired(string $key, object $cacheCallback, int $time, bool $lock) {
+	if($this->isDebugging){
             $this->response = $cacheCallback();
-		}
+	}
 
         if ($this->hasExpired($key)){
-            $funcResponse = $cacheCallback();
-            if(!empty($funcResponse)){
-                $this->buildData($key, $funcResponse, $time, $lock);
+            $this->response = $cacheCallback();
+            if(!empty($this->response)){
+                $this->buildData($key, $this->response, $time, $lock);
             }
+        }else{
+            $this->response = $this->retrieveData($key);
         }
-
-        $this->response = $this->retrieveData($key);
     }
 
 
