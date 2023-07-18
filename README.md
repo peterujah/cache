@@ -1,5 +1,6 @@
 # cache
-A simple php file cache
+A simple php file cache.
+The Cache is designed to simplify the process of caching data in PHP applications. It provides various methods for configuration, data caching, retrieval, and cache management. It helps to reduce database queries, API calls, or expensive computations by storing the results in the cache.
 
 ## Installation
 
