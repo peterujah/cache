@@ -24,7 +24,7 @@ class Cache {
      * Hold the cache default file path and file name
      * @var string
      */
-    protected const NANO = "nanoBlockCache";
+    protected const NANO = "_system.cache";
 
     /**
      * Hold the cache directory path
@@ -54,7 +54,7 @@ class Cache {
      * Hold the cache details array 
      * @var array
      */
-    protected $cacheArray = array();
+    protected $cacheArray = [];
 
     /**
      * Hold the cache expiry delete option
@@ -79,6 +79,9 @@ class Cache {
      * @var bool
      */
     private $response = null;
+
+    private $cacheFilename = '';
+    private $cacheFilenameHashed = '';
 
      /**
      * Constructor.
